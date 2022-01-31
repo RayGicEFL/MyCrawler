@@ -159,8 +159,14 @@ public class Crawler {
 				String imgSavePath = config.getString("ImgSavePath").replace("%HERE%",
 						// 去掉 jarPath 末尾的 '/'
 						jarPath.substring(0, jarPath.length() - 1));
-				Response resImg;
 
+				File imgSaveDir = new File(imgSavePath);
+				if (!imgSaveDir.mkdir()) {
+					System.out.println("无法创建文件夹: " + imgSaveDir);
+					System.exit(1);
+				}
+
+				Response resImg;
 				while (true) {
 					BufferedInputStream in = null;
 					BufferedOutputStream out = null;
@@ -171,21 +177,27 @@ public class Crawler {
 
 						if (singleImg) {
 							String[] parts = filename.split("_", 2);
-							if (parts.length < 2)
+							if (parts.length < 2) {
 								System.out.println("无效文件名: " + filename);
+								continue;
+							}
 							filename = parts[0];
 
-							workFile = new File(imgSavePath, filename);
+							workFile = new File(imgSaveDir, filename);
 						}
 						else {
-							workDir = new File(imgSavePath, dataID);
+							workDir = new File(imgSaveDir, dataID);
 							if (!workDir.exists() || !workDir.isDirectory())
-								if (!workDir.mkdirs())
+								if (!workDir.mkdir()) {
 									System.out.println("无法创建文件夹: " + workDir);
+									continue;
+								}
 
 							String[] parts = filename.split("_", 2);
-							if (parts.length < 2)
+							if (parts.length < 2) {
 								System.out.println("无效文件名: " + filename);
+								continue;
+							}
 							filename = parts[1];
 
 							workFile = new File(workDir, filename);
