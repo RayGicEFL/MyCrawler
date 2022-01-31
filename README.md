@@ -1,4 +1,4 @@
-# MyCrawler v1.0.0
+# MyCrawler v1.0.1
 这是一个 [pixiv](https://www.pixiv.net/) 爬虫，修改自 [PixivCrawler](https://github.com/R-Josef/PixivCrawler/)。
 
 ## 特性

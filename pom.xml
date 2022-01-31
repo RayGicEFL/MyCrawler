@@ -5,7 +5,7 @@
 
     <groupId>efl.crawler</groupId>
     <artifactId>MyCrawler</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <name>MyCrawler</name>
     <description>PixivCrawler modified for EFL</description>

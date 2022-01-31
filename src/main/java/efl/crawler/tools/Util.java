@@ -7,6 +7,8 @@ public class Util {
 
 	public static boolean createFolder(String folderPath) {
 		File folder = new File(folderPath);
+		if (folder.exists() && folder.isDirectory())
+			return true;
 		return folder.mkdirs();
 	}
 

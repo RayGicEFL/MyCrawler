@@ -9,7 +9,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 public class MyCrawler {
-	private final static String VERSION = "1.0.0";
+	private final static String VERSION = "1.0.1";
 
 	public static String jarPath = Objects.requireNonNull(MyCrawler.class.getClassLoader().getResource("")).getPath();
 	public static Config config = new Config();
@@ -58,9 +58,9 @@ public class MyCrawler {
 
 	private static void printAbout() {
 		String content = "==================== MyCrawler ==================== \n" +
-				"\n\t版本: " + VERSION + "\n" +
-				"\n\t作者: EFL \n" +
-				"\n\tGitHub: https://github.com/RayGicEFL/MyCrawler \n" +
+				"\n  版本: " + VERSION + "\n" +
+				"\n  作者: EFL \n" +
+				"\n  GitHub: https://github.com/RayGicEFL/MyCrawler \n" +
 				"\n==================== MyCrawler ==================== \n";
 		System.out.print(content);
 	}
