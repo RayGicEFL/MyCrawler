@@ -161,10 +161,7 @@ public class Crawler {
 						jarPath.substring(0, jarPath.length() - 1));
 
 				File imgSaveDir = new File(imgSavePath);
-				if (!imgSaveDir.mkdir()) {
-					System.out.println("无法创建文件夹: " + imgSaveDir);
-					System.exit(1);
-				}
+				imgSaveDir.mkdir();
 
 				Response resImg;
 				while (true) {
@@ -181,7 +178,7 @@ public class Crawler {
 								System.out.println("无效文件名: " + filename);
 								continue;
 							}
-							filename = parts[0];
+							filename = parts[0] + ".jpg";
 
 							workFile = new File(imgSaveDir, filename);
 						}
