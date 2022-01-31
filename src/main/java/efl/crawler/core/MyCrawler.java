@@ -9,7 +9,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 public class MyCrawler {
-	private final static String VERSION = "1.0.1";
+	private final static String VERSION = "1.1.0";
 
 	public static String jarPath = Objects.requireNonNull(MyCrawler.class.getClassLoader().getResource("")).getPath();
 	public static Config config = new Config();
