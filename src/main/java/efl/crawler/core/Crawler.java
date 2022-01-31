@@ -144,12 +144,15 @@ public class Crawler {
 			String p0url = obj.getJSONObject("illust").getJSONObject(dataID).getJSONObject("urls")
 					.getString("original");
 
+			boolean singleImg;
 			for (int i = 0; i < pageCount; i++) {
 				String imgURL;
 				if (i == 0) {
 					imgURL = p0url;
+					singleImg = true;
 				} else {
 					imgURL = p0url.replaceAll("p0", "p" + i);
+					singleImg = false;
 				}
 				String filename = imgURL.substring(imgURL.lastIndexOf("/") + 1);
 
@@ -162,20 +165,32 @@ public class Crawler {
 					BufferedInputStream in = null;
 					BufferedOutputStream out = null;
 					try {
+						File workDir, workFile;
 						resImg = Jsoup.connect(imgURL).cookies(cookies).ignoreContentType(true).maxBodySize(1073741824)
 								.referrer("https://www.pixiv.net/artworks/" + dataID).execute();
 
-						File workDir = new File(imgSavePath, dataID);
-						if (!workDir.exists() || !workDir.isDirectory())
-							if (!workDir.mkdirs())
-								System.out.println("无法创建文件夹: " + workDir);
+						if (singleImg) {
+							String[] parts = filename.split("_", 2);
+							if (parts.length < 2)
+								System.out.println("无效文件名: " + filename);
+							filename = parts[0];
 
-						String[] parts = filename.split("_", 2);
-						if (parts.length < 2)
-							System.out.println("无效文件名: " + filename);
-						filename = parts[1];
+							workFile = new File(imgSavePath, filename);
+						}
+						else {
+							workDir = new File(imgSavePath, dataID);
+							if (!workDir.exists() || !workDir.isDirectory())
+								if (!workDir.mkdirs())
+									System.out.println("无法创建文件夹: " + workDir);
 
-						File workFile = new File(workDir, filename);
+							String[] parts = filename.split("_", 2);
+							if (parts.length < 2)
+								System.out.println("无效文件名: " + filename);
+							filename = parts[1];
+
+							workFile = new File(workDir, filename);
+						}
+
 						in = resImg.bodyStream();
 						out = new BufferedOutputStream(new FileOutputStream(workFile));
 
