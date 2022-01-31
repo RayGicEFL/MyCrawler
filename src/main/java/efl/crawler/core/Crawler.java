@@ -156,7 +156,6 @@ public class Crawler {
 				String imgSavePath = config.getString("ImgSavePath").replace("%HERE%",
 						// 去掉 jarPath 末尾的 '/'
 						jarPath.substring(0, jarPath.length() - 1));
-				File imgFile = Util.createFile(imgSavePath, filename);
 				Response resImg;
 
 				while (true) {
@@ -165,8 +164,20 @@ public class Crawler {
 					try {
 						resImg = Jsoup.connect(imgURL).cookies(cookies).ignoreContentType(true).maxBodySize(1073741824)
 								.referrer("https://www.pixiv.net/artworks/" + dataID).execute();
+
+						File workDir = new File(imgSavePath, dataID);
+						if (!workDir.exists() || !workDir.isDirectory())
+							if (!workDir.mkdir())
+								System.out.println("无法创建文件夹: " + workDir);
+
+						String[] parts = filename.split("_", 2);
+						if (parts.length < 2)
+							System.out.println("无效文件名: " + filename);
+						filename = parts[1];
+
+						File workFile = new File(workDir, filename);
 						in = resImg.bodyStream();
-						out = new BufferedOutputStream(new FileOutputStream(imgFile));
+						out = new BufferedOutputStream(new FileOutputStream(workFile));
 
 						byte[] bytes = new byte[1024];
 						int total = 0;
