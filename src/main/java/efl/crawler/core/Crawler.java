@@ -167,7 +167,7 @@ public class Crawler {
 
 						File workDir = new File(imgSavePath, dataID);
 						if (!workDir.exists() || !workDir.isDirectory())
-							if (!workDir.mkdir())
+							if (!workDir.mkdirs())
 								System.out.println("无法创建文件夹: " + workDir);
 
 						String[] parts = filename.split("_", 2);
