@@ -92,7 +92,7 @@ public class Crawler {
 				String dataID = image.attr("data-id");
 				Element imgPage = image.select("div.ranking-image-item").select("a").get(0);
 				String imgPageURL = imgPage.absUrl("href");
-				System.out.println("===============" + dataID + "===============");
+				System.out.println("=============== " + dataID + " ===============");
 				System.out.println("正在爬取: " + imgPageURL);
 				resolveImagePage(imgPageURL, dataID);
 			}

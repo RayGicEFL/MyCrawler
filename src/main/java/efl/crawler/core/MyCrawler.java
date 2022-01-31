@@ -57,11 +57,10 @@ public class MyCrawler {
 	}
 
 	private static void printAbout() {
-		String content = "==================== MyCrawler ==================== \n" +
+		String content = "=============== MyCrawler =============== \n" +
 				"\n  版本: " + VERSION + "\n" +
 				"\n  作者: EFL \n" +
-				"\n  GitHub: https://github.com/RayGicEFL/MyCrawler \n" +
-				"\n==================== MyCrawler ==================== \n";
+				"\n  GitHub: https://github.com/RayGicEFL/MyCrawler \n";
 		System.out.print(content);
 	}
 
