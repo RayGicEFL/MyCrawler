@@ -15,7 +15,6 @@ import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
 import efl.crawler.tools.SQLiter;
-import efl.crawler.tools.Util;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
@@ -144,61 +143,51 @@ public class Crawler {
 			String p0url = obj.getJSONObject("illust").getJSONObject(dataID).getJSONObject("urls")
 					.getString("original");
 
-			boolean singleImg;
+			File workDir, workFile = null, imgSaveDir = null;
+			String filename = null;
 			for (int i = 0; i < pageCount; i++) {
 				String imgURL;
 				if (i == 0) {
 					imgURL = p0url;
-					singleImg = true;
 				} else {
 					imgURL = p0url.replaceAll("p0", "p" + i);
-					singleImg = false;
 				}
-				String filename = imgURL.substring(imgURL.lastIndexOf("/") + 1);
+				filename = imgURL.substring(imgURL.lastIndexOf("/") + 1);
 
 				String imgSavePath = config.getString("ImgSavePath").replace("%HERE%",
 						// 去掉 jarPath 末尾的 '/'
 						jarPath.substring(0, jarPath.length() - 1));
 
-				File imgSaveDir = new File(imgSavePath);
-				imgSaveDir.mkdir();
+				imgSaveDir = new File(imgSavePath);
+				if (!imgSaveDir.exists() || !imgSaveDir.isDirectory())
+					if (!imgSaveDir.mkdir()) {
+						System.out.println("无法创建文件夹: " + imgSaveDir);
+						System.exit(1);
+					}
 
 				Response resImg;
 				while (true) {
 					BufferedInputStream in = null;
 					BufferedOutputStream out = null;
 					try {
-						File workDir, workFile;
 						resImg = Jsoup.connect(imgURL).cookies(cookies).ignoreContentType(true).maxBodySize(1073741824)
 								.referrer("https://www.pixiv.net/artworks/" + dataID).execute();
 
-						if (singleImg) {
-							String[] parts = filename.split("_", 2);
-							if (parts.length < 2) {
-								System.out.println("无效文件名: " + filename);
+						workDir = new File(imgSaveDir, dataID);
+						if (!workDir.exists() || !workDir.isDirectory())
+							if (!workDir.mkdir()) {
+								System.out.println("无法创建文件夹: " + workDir);
 								continue;
 							}
-							filename = parts[0] + ".jpg";
 
-							workFile = new File(imgSaveDir, filename);
+						String[] parts = filename.split("_", 2);
+						if (parts.length < 2) {
+							System.out.println("无效文件名: " + filename);
+							continue;
 						}
-						else {
-							workDir = new File(imgSaveDir, dataID);
-							if (!workDir.exists() || !workDir.isDirectory())
-								if (!workDir.mkdir()) {
-									System.out.println("无法创建文件夹: " + workDir);
-									continue;
-								}
+						String newFilename = parts[1];
 
-							String[] parts = filename.split("_", 2);
-							if (parts.length < 2) {
-								System.out.println("无效文件名: " + filename);
-								continue;
-							}
-							filename = parts[1];
-
-							workFile = new File(workDir, filename);
-						}
+						workFile = new File(workDir, newFilename);
 
 						in = resImg.bodyStream();
 						out = new BufferedOutputStream(new FileOutputStream(workFile));
@@ -236,6 +225,15 @@ public class Crawler {
 						} catch (NullPointerException | SSLException ignored){}
 					}
 				}
+			} if (pageCount == 1) {
+				if (filename.contains(".jpg"))
+					filename = dataID + ".jpg";
+				else if (filename.contains(".png"))
+					filename = dataID + ".png";
+
+				File newWorkFile = new File(imgSaveDir, filename);
+				if (!workFile.renameTo(newWorkFile))
+					System.out.println("无法从作品 " + dataID + " 中提取单一图片。");
 			}
 
 			db.addArtworks(Integer.parseInt(dataID), pageCount);
