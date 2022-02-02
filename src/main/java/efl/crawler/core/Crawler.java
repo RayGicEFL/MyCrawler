@@ -143,7 +143,7 @@ public class Crawler {
 			String p0url = obj.getJSONObject("illust").getJSONObject(dataID).getJSONObject("urls")
 					.getString("original");
 
-			File workDir, workFile = null, imgSaveDir = null;
+			File workDir = null, workFile = null, imgSaveDir = null;
 			String filename = null;
 			for (int i = 0; i < pageCount; i++) {
 				String imgURL;
@@ -234,6 +234,9 @@ public class Crawler {
 				File newWorkFile = new File(imgSaveDir, filename);
 				if (!workFile.renameTo(newWorkFile))
 					System.out.println("无法从作品 " + dataID + " 中提取单一图片。");
+				if (workDir.exists() && workDir.isDirectory())
+					if (!workDir.delete())
+						System.out.println("无法删除文件夹: " + workDir);
 			}
 
 			db.addArtworks(Integer.parseInt(dataID), pageCount);
